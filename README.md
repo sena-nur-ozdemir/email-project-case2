@@ -93,17 +93,21 @@ Bu proje ile aşağıdaki konularda pratik yapılmıştır:
 
 
 ### 📝 Register Sayfası
+<img width="1898" height="862" alt="image" src="https://github.com/user-attachments/assets/b7b1ae43-7cc4-4020-9561-a7eaeab79624" />
 
+### 📑 Kullanım Şartları
+<img width="1913" height="861" alt="image" src="https://github.com/user-attachments/assets/193d2811-0dfb-4586-9aab-42939319369f" />
+
+### ✉️ Email Doğrulama
 
 ### 📥 Gelen Kutusu
-
+<img width="1918" height="867" alt="image" src="https://github.com/user-attachments/assets/adba0c71-463e-4741-9596-5e387201afc6" />
 
 ### ✉️ Mail Oluşturma (Compose)
-
+<img width="1918" height="862" alt="image" src="https://github.com/user-attachments/assets/20071b7e-283e-40c7-8ee1-000f82300f7d" />
 
 ### 📊 Dashboard
-
-
+<img width="1902" height="865" alt="image" src="https://github.com/user-attachments/assets/42ce4578-6fca-4261-a940-1235b312983f" />
 
 ---
 
