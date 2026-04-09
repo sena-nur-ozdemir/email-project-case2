@@ -1,0 +1,64 @@
+﻿@model Case2EmailProject_.Dtos.ConfirmEmailDto
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Syndash - Bootstrap4 Admin Template</title>
+    <!--favicon-->
+    <link rel="icon" href="/vertical/assets/images/favicon-32x32.png" type="image/png" />
+    <!-- loader-->
+    <link href="/vertical/assets/css/pace.min.css" rel="stylesheet" />
+    <script src="/vertical/assets/js/pace.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/vertical/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&family=Roboto&display=swap" />
+    <!-- Icons CSS -->
+    <link rel="stylesheet" href="/vertical/assets/css/icons.css" />
+    <!-- App CSS -->
+    <link rel="stylesheet" href="/vertical/assets/css/app.css" />
+</head>
+
+<body class="bg-forgot">
+    <!-- wrapper -->
+    <div class="wrapper">
+        <div class="authentication-forgot d-flex align-items-center justify-content-center">
+            <div class="card shadow-lg forgot-box">
+                <div class="card-body p-md-5">
+                    <div class="text-center">
+                        <img src="/vertical/assets/images/icons/forgot-2.png" width="140" alt="" />
+                    </div>
+                    <h4 class="text-center mt-4 mb-2">Email Doğrulama</h4>
+                    <p class="text-center text-muted mb-4">
+                        @Model.Email email adresine gönderilen doğrulama kodunu giriniz.
+                    </p>
+                    <form method="post">
+                        <div class="mb-3 mt-4">
+                            <label class="form-label">Doğrulama Kodu</label>
+                            <input asp-for="ConfirmCode" type="text" class="form-control form-control-lg radius-30 text-center" placeholder="000000" />
+                            <span asp-validation-for="ConfirmCode" class="text-danger"></span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-primary btn-lg radius-30">Emaili Doğrula</button>
+                            <a asp-controller="Register"
+                               asp-action="CreateUser"
+                               class="btn btn-light radius-30">
+                                <i class='bx bx-arrow-back mr-1'></i>
+                                Kayıt Sayfasına Dön
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end wrapper -->
+</body>
+
+</html>

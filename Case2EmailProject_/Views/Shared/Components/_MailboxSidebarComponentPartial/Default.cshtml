@@ -1,0 +1,67 @@
+﻿﻿@{
+var action = ViewContext.RouteData.Values["action"]?.ToString();
+}
+<div class="email-sidebar">
+    <div class="email-sidebar-header d-grid p-3">
+        <a href="/Mailbox/SendMessage/" class="btn btn-primary compose-mail-btn rounded-pill shadow">
+            <i class='bx bx-plus me-2'></i> Yeni Mesaj
+        </a>
+    </div>
+    <div class="email-sidebar-content">
+        <div class="email-navigation">
+            <div class="list-group list-group-flush px-2">
+                <a href="/Mailbox/Inbox/" class="list-group-item list-group-item-action d-flex align-items-center rounded-3 mb-1 py-2 border-0 @(action == "Inbox" ? "active" : "")">
+                    <i class='bx bxs-inbox me-3 font-20'></i>
+                    <span class="flex-grow-1">Gelen Kutusu</span>
+                    <span class="badge bg-primary rounded-pill">@ViewBag.v1</span>
+                </a>
+                <a href="/Mailbox/StarredList/" class="list-group-item list-group-item-action d-flex align-items-center rounded-3 mb-1 py-2 border-0 @(action == "StarredList" ? "active" : "")">
+                    <i class='bx bxs-star me-3 font-20 text-warning'></i>
+                    <span class="flex-grow-1">Yıldızlı</span>
+                    <span class="badge bg-primary rounded-pill">@ViewBag.v2</span>
+
+                </a>
+                <a href="/Mailbox/Sendbox/" class="list-group-item list-group-item-action d-flex align-items-center rounded-3 mb-1 py-2 border-0 @(action == "Sendbox" ? "active" : "")">
+                    <i class='bx bxs-send me-3 font-20 text-info'></i>
+                    <span class="flex-grow-1">Gönderilenler</span>
+                    <span class="badge bg-primary rounded-pill">@ViewBag.v3</span>
+
+                </a>
+                <a href="/Mailbox/DraftBox/" class="list-group-item list-group-item-action d-flex align-items-center rounded-3 mb-1 py-2 border-0 @(action == "DraftBox" ? "active" : "")">
+                    <i class='bx bxs-file-blank me-3 font-20 text-secondary'></i>
+                    <span class="flex-grow-1">Taslaklar</span>
+                    <span class="badge bg-secondary rounded-pill">@ViewBag.v4</span>
+                </a>
+
+                <a href="/Mailbox/SpamList/" class="list-group-item list-group-item-action d-flex align-items-center rounded-3 mb-1 py-2 border-0 @(action == "SpamList" ? "active" : "")">
+                    <i class='bx bxs-info-circle me-3 font-20 text-danger'></i>
+                    <span class="flex-grow-1">Spam</span>
+                    <span class="badge bg-primary rounded-pill">@ViewBag.v5</span>
+
+                </a>
+                <a href="/Mailbox/TrashBox/" class="list-group-item list-group-item-action d-flex align-items-center rounded-3 mb-1 py-2 border-0 @(action == "TrashBox" ? "active" : "")">
+                    <i class='bx bxs-trash-alt me-3 font-20 text-muted'></i>
+                    <span class="flex-grow-1">Çöp Kutusu</span>
+                    <span class="badge bg-primary rounded-pill">@ViewBag.v6</span>
+
+                </a>
+            </div>
+        </div>
+        <div class="mt-2">
+            @await Component.InvokeAsync("_MailboxSidebarCategoryComponentPartial")
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .email-meeting .list-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem; /* Tüm itemlar arası otomatik boşluk */
+    }
+
+    .category-item {
+        margin-bottom: 0 !important; /* gap kullandığımız için margin'e gerek yok */
+    }
+</style> 

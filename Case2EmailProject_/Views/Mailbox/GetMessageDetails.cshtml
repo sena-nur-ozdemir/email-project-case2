@@ -1,0 +1,694 @@
+﻿@model Case2EmailProject_.Entities.Message
+@{
+    ViewData["Title"] = "GetMessageDetails";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<div class="email-wrapper">
+    @await Component.InvokeAsync("_MailboxSidebarComponentPartial")
+
+    <div class="email-header d-xl-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+            <div class="email-toggle-btn me-3">
+                <i class='bx bx-menu'></i>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="header-icon-wrapper">
+                    <i class='bx bx-envelope-open'></i>
+                </div>
+                <h4 class="mb-0 ms-2 header-title">Mesaj Detayı</h4>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-2 mt-3 mt-xl-0">
+            <a href="/Mailbox/Inbox" class="btn btn-light btn-sm">
+                <i class='bx bx-arrow-back me-1'></i>Geri Dön
+            </a>
+        </div>
+    </div>
+
+    <div class="email-content">
+        <div class="card">
+            <div class="card-body">
+                <!-- Message Header -->
+                <div class="message-header">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div class="flex-grow-1">
+                            <h5 class="message-subject mb-2">@Model.Subject</h5>
+                            <div class="message-meta">
+                                @if (Model.Category != null && !string.IsNullOrEmpty(Model.Category.CategoryName))
+                                {
+                                    <span class="badge bg-primary bg-opacity-10 text-white">@Model.Category.CategoryName</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary">Kategorisiz</span>
+                                }
+                            </div>
+                        </div>
+                        @if (ViewBag.IsInTrash != true)
+                        {
+                            <div class="message-actions d-flex gap-2">
+                                <button type="button" class="btn btn-sm @(Model.IsStarred ? "btn-warning" : "btn-outline-warning")" onclick="toggleStar(@Model.MessageId)" id="starBtn">
+                                    <i class='bx @(Model.IsStarred ? "bxs-star" : "bx-star")' id="starIcon"></i>
+                                </button>
+                                <button type="button" class="btn btn-sm @(Model.IsSpam ? "btn-danger" : "btn-outline-danger")" onclick="toggleSpam(@Model.MessageId)">
+                                    <i class='bx @(Model.IsSpam ? "bxs-error" : "bx-error")'></i>
+                                </button>
+
+                                <button type="button" class="btn btn-sm btn-outline-dark" onclick="deleteMessage(@Model.MessageId)">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </div>
+                        }
+                    </div>
+
+                    <hr class="my-2">
+
+                    <!-- Sender Info -->
+                    <div class="sender-info d-flex align-items-center justify-content-between flex-wrap">
+                        <div class="d-flex align-items-center">
+                            <div class="sender-avatar">
+                                <i class='bx bx-user-circle'></i>
+                            </div>
+                            <div class="ms-2">
+                                <div class="sender-name fw-bold">Gönderen</div>
+                                <div class="sender-email text-muted small">@Model.SenderMail</div>
+                            </div>
+                        </div>
+                        <div class="message-date text-muted small">
+                            <i class='bx bx-time-five me-1'></i>
+                            @Model.SendingDate.ToString("dd MMM yyyy, HH:mm")
+                        </div>
+                    </div>
+
+                    <div class="receiver-info mt-1">
+                        <small class="text-muted">
+                            <strong>Alıcı:</strong> @Model.ReceiverMail
+                        </small>
+                    </div>
+                </div>
+
+                <hr class="my-2">
+
+                <!-- Message Content - HTML formatında gösterilecek -->
+                <div class="message-content">
+                    @Html.Raw(Model.MessageDetail)
+                </div>
+
+                <hr class="my-3">
+
+                <!-- Action Buttons -->
+                <div class="message-footer">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <button type="button" class="btn btn-primary btn-sm px-4" onclick="replyMessage(@Model.MessageId)">
+                            <i class='bx bx-reply me-1'></i>Yanıtla
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm px-4" onclick="forwardMessage(@Model.MessageId)">
+                            <i class='bx bx-right-arrow-alt me-1'></i>İlet
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm px-4" onclick="printMessage()">
+                            <i class='bx bx-printer me-1'></i>Yazdır
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Messages (Optional) -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <h6 class="mb-3 fw-bold">
+                    <i class='bx bx-conversation me-2'></i>İlgili Mesajlar
+                </h6>
+                <div class="related-messages">
+                    <p class="text-muted small mb-0">Bu konuyla ilgili başka mesaj bulunmamaktadır.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay email-toggle-btn-mobile"></div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // Yıldızlama
+        function toggleStar(messageId) {
+
+            $.ajax({
+                url: '/Mailbox/ToggleStar',
+                type: 'POST',
+                data: { id: messageId },
+                success: function (response) {
+
+                    const starIcon = document.getElementById('starIcon');
+                    const starBtn = document.getElementById('starBtn');
+
+                    if (response.isStarred) {
+                        starIcon.classList.remove('bx-star');
+                        starIcon.classList.add('bxs-star');
+                        starBtn.classList.remove('btn-outline-warning');
+                        starBtn.classList.add('btn-warning');
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'success',
+                            title: 'Mesaj yıldızlandı',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            toast: true
+                        });
+                    }
+                    else {
+                        starIcon.classList.remove('bxs-star');
+                        starIcon.classList.add('bx-star');
+                        starBtn.classList.remove('btn-warning');
+                        starBtn.classList.add('btn-outline-warning');
+
+                        Swal.fire({
+                            position: 'top-end',
+                            icon: 'info',
+                            title: 'Yıldız kaldırıldı',
+                            showConfirmButton: false,
+                            timer: 1500,
+                            toast: true
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata!',
+                        text: 'İşlem sırasında bir hata oluştu',
+                        toast: true,
+                        position: 'top-end',
+                        timer: 2000
+                    });
+                }
+            });
+        }
+        // Spam olarak işaretle
+        function toggleSpam(messageId) {
+
+            $.ajax({
+                url: '/Mailbox/ToggleSpam',
+                type: 'POST',
+                data: { id: messageId },
+                success: function (response) {
+
+                    if (response.isSpam) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Spam olarak işaretlendi',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Spam klasöründen çıkarıldı',
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(() => {
+                            location.reload();
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Hata oluştu'
+                    });
+                }
+            });
+        }
+        // Sil
+        function deleteMessage(messageId) {
+            Swal.fire({
+                title: 'Mesaj silinsin mi?',
+                text: "Bu işlem geri alınamaz!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#dc3545',
+                cancelButtonColor: '#6c757d',
+                confirmButtonText: 'Evet, sil',
+                cancelButtonText: 'İptal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/Mailbox/DeleteMessage',
+                        type: 'POST',
+                        data: { id: messageId },
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Silindi!',
+                                text: 'Mesaj silindi',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                window.location.href = '/Mailbox/Inbox';
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Hata!',
+                                text: 'İşlem sırasında bir hata oluştu'
+                            });
+                        }
+                    });
+                }
+            });
+        }
+
+        // Yanıtla
+        function replyMessage(messageId) {
+            window.location.href = '/Mailbox/Reply/' + messageId;
+        }
+
+        // İlet
+        function forwardMessage(messageId) {
+            window.location.href = '/Mailbox/Forward/' + messageId;
+        }
+
+        // Yazdır
+        function printMessage() {
+            window.print();
+        }
+    </script>
+
+    <style>
+        /* Header Styling */
+        .email-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .header-icon-wrapper i {
+                font-size: 20px;
+                color: white;
+            }
+
+        .header-title {
+            color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .btn-light {
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+            .btn-light:hover {
+                background: white;
+                color: #764ba2;
+            }
+
+        /* Content Area */
+        .email-content {
+            padding: 0.75rem 2rem 1.5rem;
+            height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 1rem;
+        }
+
+        /* Message Header */
+        .message-subject {
+            color: #2c3e50;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .message-meta .badge {
+            font-size: 0.75rem;
+            padding: 0.35rem 0.75rem;
+            font-weight: 500;
+        }
+
+        .message-actions .btn {
+            width: 36px;
+            height: 36px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+            .message-actions .btn i {
+                font-size: 18px;
+            }
+
+        /* Sender Info */
+        .sender-info {
+            padding: 0.5rem 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .sender-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .sender-avatar i {
+                font-size: 24px;
+                color: white;
+            }
+
+        .sender-name {
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .sender-email {
+            font-size: 0.8rem;
+        }
+
+        .message-date {
+            font-size: 0.8rem;
+        }
+
+        .receiver-info {
+            padding-left: 0.5rem;
+        }
+
+        /* Message Content - Scroll ile */
+        .message-content {
+            padding: 0.75rem 1rem;
+            background: #ffffff;
+            border-radius: 8px;
+            min-height: 200px;
+            line-height: 1.6;
+            color: #2c3e50;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            overflow: visible;
+        }
+
+            /* Scrollbar Styling */
+            .message-content::-webkit-scrollbar {
+                width: 8px;
+            }
+
+            .message-content::-webkit-scrollbar-track {
+                background: #f1f1f1;
+                border-radius: 10px;
+            }
+
+            .message-content::-webkit-scrollbar-thumb {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 10px;
+            }
+
+                .message-content::-webkit-scrollbar-thumb:hover {
+                    background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+                }
+
+            /* TinyMCE editör içeriği için tam stil desteği */
+            .message-content p {
+                margin-bottom: 1rem;
+                word-wrap: break-word;
+                overflow-wrap: break-word;
+            }
+
+            .message-content h1,
+            .message-content h2,
+            .message-content h3,
+            .message-content h4,
+            .message-content h5,
+            .message-content h6 {
+                margin-top: 1.5rem;
+                margin-bottom: 0.75rem;
+                font-weight: 600;
+                color: #2c3e50;
+            }
+
+            .message-content h1 {
+                font-size: 2rem;
+            }
+
+            .message-content h2 {
+                font-size: 1.75rem;
+            }
+
+            .message-content h3 {
+                font-size: 1.5rem;
+            }
+
+            .message-content h4 {
+                font-size: 1.25rem;
+            }
+
+            .message-content h5 {
+                font-size: 1.1rem;
+            }
+
+            .message-content h6 {
+                font-size: 1rem;
+            }
+
+            .message-content ul,
+            .message-content ol {
+                margin-left: 1.5rem;
+                margin-bottom: 1rem;
+                padding-left: 0.5rem;
+            }
+
+            .message-content li {
+                margin-bottom: 0.5rem;
+                line-height: 1.6;
+            }
+
+            .message-content strong,
+            .message-content b {
+                font-weight: 600;
+                color: #2c3e50;
+            }
+
+            .message-content em,
+            .message-content i {
+                font-style: italic;
+            }
+
+            .message-content u {
+                text-decoration: underline;
+            }
+
+            .message-content s,
+            .message-content strike {
+                text-decoration: line-through;
+            }
+
+            .message-content a {
+                color: #667eea;
+                text-decoration: none;
+                word-wrap: break-word;
+            }
+
+                .message-content a:hover {
+                    color: #764ba2;
+                    text-decoration: underline;
+                }
+
+            .message-content img {
+                max-width: 100%;
+                height: auto;
+                border-radius: 6px;
+                margin: 1rem 0;
+                display: block;
+            }
+
+            .message-content table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 1rem 0;
+            }
+
+                .message-content table td,
+                .message-content table th {
+                    border: 1px solid #dee2e6;
+                    padding: 0.75rem;
+                    text-align: left;
+                }
+
+                .message-content table th {
+                    background-color: #f8f9fa;
+                    font-weight: 600;
+                }
+
+            .message-content blockquote {
+                border-left: 4px solid #667eea;
+                padding-left: 1rem;
+                margin: 1rem 0;
+                color: #6c757d;
+                font-style: italic;
+            }
+
+            .message-content code {
+                background-color: #f8f9fa;
+                padding: 0.2rem 0.4rem;
+                border-radius: 3px;
+                font-family: 'Courier New', Courier, monospace;
+                font-size: 0.9em;
+                color: #e83e8c;
+            }
+
+            .message-content pre {
+                background-color: #f8f9fa;
+                padding: 1rem;
+                border-radius: 6px;
+                overflow-x: auto;
+                margin: 1rem 0;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+
+                .message-content pre code {
+                    background: none;
+                    padding: 0;
+                    color: #2c3e50;
+                }
+
+        /* Message Footer */
+        .message-footer {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+        }
+
+        .btn {
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        /* Related Messages */
+        .related-messages {
+            padding: 0.75rem;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        /* Print Styles */
+        @@media print {
+            .email-header, .message-actions, .message-footer, .email-toggle-btn, .card:last-child {
+                display: none !important;
+            }
+
+            .email-content {
+                padding: 0;
+            }
+
+            .card {
+                box-shadow: none;
+                border: 1px solid #dee2e6;
+            }
+
+            .message-content {
+                overflow: visible;
+                page-break-inside: auto;
+            }
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .email-content {
+                padding: 1rem;
+            }
+
+            .card-body {
+                padding: 0.75rem;
+            }
+
+            .header-title {
+                font-size: 1rem;
+            }
+
+            .header-icon-wrapper {
+                width: 35px;
+                height: 35px;
+            }
+
+            .message-subject {
+                font-size: 1rem;
+            }
+
+            .message-actions {
+                flex-wrap: wrap;
+            }
+
+                .message-actions .btn {
+                    width: 32px;
+                    height: 32px;
+                }
+
+            .sender-info {
+                flex-direction: column;
+                align-items: flex-start !important;
+                padding: 0.5rem;
+            }
+
+            .message-date {
+                margin-top: 0.5rem;
+            }
+
+            .message-content {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+
+                .message-content h1 {
+                    font-size: 1.5rem;
+                }
+
+                .message-content h2 {
+                    font-size: 1.35rem;
+                }
+
+                .message-content h3 {
+                    font-size: 1.2rem;
+                }
+        }
+    </style>
+}

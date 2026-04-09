@@ -1,0 +1,114 @@
+﻿@model List<Case2EmailProject_.Dtos.CategoryDto>
+@{
+    var colors = new[] { "bg-primary", "bg-success", "bg-danger", "bg-warning", "bg-info", "bg-purple", "bg-pink" };
+    int i = 0;
+}
+
+<div class="email-meeting">
+    <div class="px-2">
+        <!-- Kategori Başlığı -->
+        <div class="category-header mb-2">
+            <small class="text-uppercase fw-bold d-flex align-items-center">
+                <i class='bx bx-folder me-2'></i> KATEGORİLER
+            </small>
+        </div>
+
+        <!-- Kategoriler -->
+        @foreach (var item in Model)
+        {
+            var isActive = item.CategoryId == ViewBag.activeCategoryId;
+            <a href="/Mailbox/GetMessagesByCategory/@item.CategoryId" class="d-flex align-items-center justify-content-between
+            rounded-3 py-2 px-2 category-item @(isActive ? "active-category" : "")" style="margin-bottom: 0.4rem; text-decoration: none;">
+                <div class="d-flex align-items-center">
+                    <span class="category-dot me-3 @colors[i % colors.Length]"></span>
+                    <span class="category-name @(isActive ? "fw-bold" : "")">@item.CategoryName</span>
+                </div>
+                @if (item.MessageCount > 0)
+                {
+                    <span class="badge @colors[i % colors.Length] rounded-pill category-badge">@item.MessageCount</span>
+
+                }
+            </a>
+            i++;
+        }
+    </div>
+</div>
+
+<style>
+    /* Kategori Başlık Stili */
+    .category-header {
+        padding: 0.5rem 0.5rem 0.3rem 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+    }
+
+        .category-header small {
+            font-size: 0.7rem;
+            letter-spacing: 1.2px;
+            color: #6c757d;
+            font-weight: 700;
+        }
+
+        .category-header i {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+    /* Kategori İtemler */
+    .category-item {
+        transition: all 0.25s ease;
+        cursor: pointer;
+        font-size: 0.9rem;
+        color: #495057;
+        position: relative;
+    }
+
+        .category-item:hover {
+            background-color: #f0f2f5;
+            transform: translateX(5px);
+        }
+
+        .category-item.active-category {
+            background: linear-gradient(135deg, #e9f2ff, #f8f9ff);
+            border-left: 4px solid #0d6efd;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(13,110,253,0.15);
+        }
+
+            .category-item.active-category .category-name {
+                color: #0d6efd;
+            }
+
+            .category-item.active-category .category-badge {
+                transform: scale(1.1);
+            }
+
+    .category-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .category-name {
+        font-weight: 500;
+    }
+    /* Badge Stili */
+    .category-badge {
+        font-size: 0.7rem;
+        font-weight: 600;
+        padding: 0.3rem 0.6rem;
+        transition: all 0.3s ease;
+        min-width: 1.5rem;
+        text-align: center;
+    }
+
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+
+    .bg-pink {
+        background-color: #d63384 !important;
+    }
+</style>

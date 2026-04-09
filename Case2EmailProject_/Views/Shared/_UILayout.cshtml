@@ -1,0 +1,29 @@
+﻿﻿@{
+Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+@await Component.InvokeAsync("_HeadDefaultComponentPartial")
+<body>
+
+	<div class="wrapper mailbox-layout">
+		<header class="top-header">
+			@await Component.InvokeAsync("_NavbarDefaultComponentPartial")
+
+		</header>
+		<div class="page-wrapper">
+			<div class="page-content">
+				@RenderBody()
+			</div>
+		</div>
+
+	</div>
+	@await Component.InvokeAsync("_ThemeSettingDefaultComponentPartial")
+
+	@await Component.InvokeAsync("_ScriptsDefaultComponentPartial")
+
+	@RenderSection("Scripts", required: false)
+
+</body>
+</html>

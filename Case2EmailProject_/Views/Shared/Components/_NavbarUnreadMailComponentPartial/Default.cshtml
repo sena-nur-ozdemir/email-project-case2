@@ -1,0 +1,46 @@
+﻿@model List<Case2EmailProject_.Entities.Message>
+@{
+    Layout = null;
+}
+
+<li class="nav-item dropdown dropdown-lg">
+    <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="javascript:;" data-bs-toggle="dropdown">
+        <span class="msg-count">@Model.Count</span>
+        <i class="bx bx-comment-detail vertical-align-middle"></i>
+    </a>
+    <div class="dropdown-menu dropdown-menu-end">
+        <a href="javascript:;">
+            <div class="msg-header">
+                <h6 class="msg-header-title">@Model.Count Okunmayan Mail</h6>
+                <p class="msg-header-subtitle">Gelen Kutusu</p>
+            </div>
+        </a>
+        <div class="header-message-list">
+            @foreach (var item in Model)
+            {
+                var plaintext = System.Text.RegularExpressions.Regex.Replace(item.MessageDetail, "<.*?>", "");
+                <a class="dropdown-item" href="/Mailbox/GetMessageDetails/@item.MessageId">
+                    <div class="d-flex align-items-center">
+                        <div class="user-online">
+                            <img src="/images/user-avatar.png" class="msg-avatar" alt="user avatar">
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="msg-name">
+                                @item.SenderMail <span class="msg-time float-end">
+                                    @item.SendingDate.ToString("d.M.yyyy hh:mm")
+                                </span>
+                            </h6>
+                            <p class="msg-info">
+                                @(plaintext.Length > 25 ? plaintext.Substring(0, 25) + "..."
+                                                            : plaintext)
+                        </p>
+                    </div>
+                </div>
+            </a>
+                        }
+        </div>
+        <a href="/Mailbox/Inbox/">
+            <div class="text-center msg-footer">Tüm Mailler</div>
+        </a>
+    </div>
+</li>

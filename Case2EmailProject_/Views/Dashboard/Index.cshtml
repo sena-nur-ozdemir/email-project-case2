@@ -1,0 +1,337 @@
+﻿@model List<Case2EmailProject_.Entities.Message>
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<!--breadcrumb-->
+<div class="page-breadcrumb d-none d-md-flex align-items-center mb-3">
+    <div class="breadcrumb-title pe-3">Dashboard</div>
+    <div class="ps-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0 p-0">
+                <li class="breadcrumb-item">
+                    <a href="javascript:;"><i class='bx bx-home-alt'></i></a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">E-posta İstatistikleri</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+<!--end breadcrumb-->
+<!-- Üst İstatistik Kartları -->
+<div class="row">
+    <div class="col-12 col-lg-3">
+        <div class="card radius-15 bg-voilet">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h2 class="mb-0 text-white">@ViewBag.sentMessages <i class='bx bxs-up-arrow-alt font-14 text-white'></i></h2>
+                    </div>
+                    <div class="ms-auto font-35 text-white">
+                        <i class="bx bx-envelope"></i>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-white">Gönderilen Mailler</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-3">
+        <div class="card radius-15 bg-primary-blue">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h2 class="mb-0 text-white">@ViewBag.unreadMessages <i class='bx bxs-up-arrow-alt font-14 text-white'></i></h2>
+                    </div>
+                    <div class="ms-auto font-35 text-white">
+                        <i class="bx bx-envelope-open"></i>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-white">Okunmayan Mail Sayısı</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-3">
+        <div class="card radius-15 bg-rose">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h2 class="mb-0 text-white">@ViewBag.spamMessages <i class='bx bxs-up-arrow-alt font-14 text-white'></i></h2>
+                    </div>
+                    <div class="ms-auto font-35 text-white">
+                        <i class="bx bx-error-circle"></i>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-white">Spam Mailler</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-3">
+        <div class="card radius-15 bg-sunset">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h2 class="mb-0 text-white">@ViewBag.starredMessages <i class='bx bxs-up-arrow-alt font-14 text-white'></i></h2>
+                    </div>
+                    <div class="ms-auto font-35 text-white">
+                        <i class="bx bx-star"></i>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div>
+                        <p class="mb-0 text-white">Yıldızlı Mail Sayısı</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Grafik ve Donut Chart -->
+<div class="row">
+    <div class="col-12 col-lg-8 d-flex">
+        <div class="card radius-15 w-100">
+            <div class="card-header border-bottom-0">
+                <div class="d-lg-flex align-items-center">
+                    <div>
+                        <h5 class="mb-2 mb-lg-0">E-posta Gönderim Trendi</h5>
+                    </div>
+                    <div class="ms-lg-auto mb-2 mb-lg-0">
+                        <div class="btn-group-round">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-white">Günlük</button>
+                                <button type="button" class="btn btn-white">Haftalık</button>
+                                <button type="button" class="btn btn-white">Aylık</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div id="chart1"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-4 d-flex">
+        <div class="card radius-15 w-100">
+            <div class="card-body">
+                <div class="card-title">
+                    <h5 class="mb-0">Mail Kategorileri</h5>
+                </div>
+                <hr />
+                <div id="chart2"></div>
+                <div class="legends mt-3">
+                    <div class="row">
+                        @{
+                            var categoryNames = ViewBag.CategoryNames as List<string>;
+                            var categoryColors = new[] { "text-primary", "text-info", "text-purple", "text-danger" };
+                            for (int i = 0; i < categoryNames.Count; i++)
+                            {
+                                <div class="col-6 mb-2">
+                                    <div class="d-flex align-items-center">
+                                        <i class='bx bxs-circle font-13 @categoryColors[i % categoryColors.Length] me-2'></i>
+                                        <span class="@categoryColors[i % categoryColors.Length]">@categoryNames[i]</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Son Gönderilen Mailler ve Ek İstatistikler -->
+<div class="row">
+    <!-- Son Gönderilen Mailler -->
+    <div class="col-12 col-lg-9">
+        <div class="card radius-15 overflow-hidden h-100">
+            <div class="card-header border-bottom-0">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h5 class="mb-0">Son Gönderilen E-postalar</h5>
+                    </div>
+                    <div class="ms-auto">
+                        <button type="button" class="btn btn-white btn-sm px-4 radius-15">Tümünü Gör</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Kategori</th>
+                                <th>Mail Konusu</th>
+                                <th>Alıcı</th>
+                                <th>Tarih</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="product-img bg-transparent border">
+                                            <i class='bx bx-shopping-bag text-primary' style="font-size: 24px;"></i>
+                                        </div>
+                                    </td>
+                                    <td>@item.Category.CategoryName</td>
+                                    <td>@item.ReceiverMail</td>
+                                    <td>@item.SendingDate.ToString("dd MMMM yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ek İstatistikler -->
+    <div class="col-12 col-lg-3">
+        <div class="row g-3 h-100">
+            <div class="col-12">
+                <div class="card radius-15 mb-0 shadow-none border">
+                    <div class="card-body text-center py-3">
+                        <div class="widgets-icons mx-auto rounded-circle bg-info text-white" style="width: 50px; height: 50px; line-height: 50px;">
+                            <i class='bx bx-edit' style="font-size: 24px;"></i>
+                        </div>
+                        <h4 class="mb-0 font-weight-bold mt-2">@ViewBag.draftMessages</h4>
+                        <p class="mb-0 small">Taslak Sayısı</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="card radius-15 mb-0 shadow-none border">
+                    <div class="card-body text-center py-3">
+                        <div class="widgets-icons mx-auto bg-red-light text-white rounded-circle" style="width: 50px; height: 50px; line-height: 50px;">
+                            <i class='bx bx-trash' style="font-size: 24px;"></i>
+                        </div>
+                        <h4 class="mb-0 font-weight-bold mt-2">@ViewBag.trashMessages</h4>
+                        <p class="mb-0 small">Çöp Kutusu</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <!-- ApexCharts -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+    <script>
+        var monthlySent = @Html.Raw(Json.Serialize(ViewBag.monthlySent));
+        var monthlyInbox = @Html.Raw(Json.Serialize(ViewBag.monthlyInbox));
+
+        var sentData = new Array(12).fill(0);
+        var inboxData = new Array(12).fill(0);
+
+        monthlySent.forEach(x => {
+            sentData[x.month - 1] = x.count;
+        });
+
+        monthlyInbox.forEach(x => {
+            inboxData[x.month - 1] = x.count;
+        });
+
+        // E-posta Gönderim Grafiği
+        var options1 = {
+            series: [{
+                name: 'Gönderilen',
+                data: sentData
+            }, {
+                name: 'Gelen',
+                data: inboxData
+            }],
+            chart: {
+                height: 350,
+                type: 'area',
+                toolbar: {
+                    show: false
+                }
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth',
+                width: 3
+            },
+            xaxis: {
+                categories: ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
+            },
+            colors: ['#667eea', '#764ba2'],
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    opacityFrom: 0.6,
+                    opacityTo: 0.1,
+                }
+            },
+            legend: {
+                position: 'top',
+                horizontalAlign: 'left'
+            }
+        };
+        var chart1 = new ApexCharts(document.querySelector("#chart1"), options1);
+        chart1.render();
+
+        // Mail Kategorileri Donut Chart
+        var categoryNames = @Html.Raw(Json.Serialize(ViewBag.CategoryNames));
+        var categoryCounts = @Html.Raw(Json.Serialize(ViewBag.CategoryCounts));
+
+        var options2 = {
+            series: categoryCounts,
+            chart: {
+                type: 'donut',
+                height: 300
+            },
+            labels: categoryNames,
+            colors: ['#0d6efd', '#17a2b8', '#6f42c1', '#dc3545'],
+            legend: {
+                show: false
+            },
+            dataLabels: {
+                enabled: true,
+                formatter: function (val) {
+                    return val.toFixed(0) + "%"
+                }
+            },
+            plotOptions: {
+                pie: {
+                    donut: {
+                        size: '75%',
+                        labels: {
+                            show: true,
+                            total: {
+                                show: true,
+                                label: 'Toplam',
+                                fontSize: '16px',
+                                fontWeight: 600,
+                                formatter: function (w) {
+                                    return w.globals.seriesTotals.reduce((a, b) => a + b, 0)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        var chart2 = new ApexCharts(document.querySelector("#chart2"), options2);
+        chart2.render();
+    </script>
+}

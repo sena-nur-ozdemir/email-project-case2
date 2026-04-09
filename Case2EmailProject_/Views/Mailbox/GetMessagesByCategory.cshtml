@@ -1,0 +1,100 @@
+﻿@model List<Case2EmailProject_.Entities.Message>
+@{
+    ViewData["Title"] = "GetMessagesByCategory";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<div class="email-wrapper">
+    @await Component.InvokeAsync("_MailboxSidebarComponentPartial")
+    <div class="email-header d-xl-flex align-items-center">
+        <div class="d-flex align-items-center">
+            <div class="email-toggle-btn">
+                <i class='bx bx-menu'></i>
+            </div>
+            <div class="btn btn-white">
+                <input class="form-check-input" type="checkbox">
+            </div>
+            <div class="">
+                <button type="button" class="btn btn-white ms-2">
+                    <i class='bx bx-refresh me-0'></i>
+                </button>
+            </div>
+            <div class="">
+                <button type="button" class="btn btn-white ms-2">
+                    <i class='bx bx-downvote me-0'></i>
+                </button>
+            </div>
+            <div class="d-none d-md-flex">
+                <button type="button" class="btn btn-white ms-2">
+                    <i class='bx bx-file me-0'></i>
+                </button>
+            </div>
+            <div class="">
+                <button type="button" class="btn btn-white ms-2">
+                    <i class='bx bx-trash me-0'></i>
+                </button>
+            </div>
+        </div>
+        <div class="flex-grow-1 mx-xl-2 my-2 my-xl-0">
+            <div class="input-group">
+                <span class="input-group-text bg-transparent"><i class="bx bx-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search mail">
+            </div>
+        </div>
+        <div class="ms-auto d-flex align-items-center">
+            <button class="btn btn-sm btn-light">1-50 of 8,740</button>
+            <button class="btn btn-white px-2 ms-2">
+                <i class='bx bx-chevron-left me-0'></i>
+            </button>
+            <button class="btn btn-white px-2 ms-2">
+                <i class='bx bx-chevron-right me-0'></i>
+            </button>
+        </div>
+    </div>
+    <div class="email-content">
+        <div class="">
+            <div class="email-list">
+                @foreach (var item in Model)
+                {
+                    var plainText = System.Text.RegularExpressions.Regex.Replace(item.MessageDetail ?? "", "<.*?>", "");
+
+                    <a href="/Mailbox/GetMessageDetails/@item.MessageId">
+                        <div class="d-md-flex align-items-center email-message px-3 py-1
+                                        @(item.IsRead ? "" : "bg-light")">
+                            <div class="d-flex align-items-center email-actions">
+                                <input class="form-check-input" type="checkbox" value="" />
+                                <i class='@(item.IsStarred==true
+                                                                                                             ? "bx bxs-star font-20 mx-2 email-star text-warning"
+                                                                                                             : "bx bx-star font-20 mx-2 email-star")'></i>
+                            <p class="mb-0 @(item.IsRead ? "" : "fw-bold text-dark")">
+                                <b>@item.Subject</b>
+                            </p>
+                        </div>
+                        <span class="badge @(item.IsRead ? "bg-secondary" : "bg-primary") rounded-pill px-3 py-1 flex-shrink-0 mx-3">
+                            @item.Category.CategoryName
+                        </span>
+
+                            <div class=" mb-0 @(item.IsRead ? "text-muted" : "text-dark fw-bold")">
+                                @(plainText.Length > 120 ? plainText.Substring(0, 120) + "..." : plainText)
+                            </div>
+                            <div class="ms-auto d-flex align-items-center">
+
+                            @{
+                                    var isToday = item.SendingDate.Date == DateTime.Now.Date;
+                                }
+
+                            <p class="mb-0 email-time @(item.IsRead ? "text-muted" : "fw-bold text-dark")">
+                                @(isToday ? item.SendingDate.ToString("HH:mm")
+                                                                : item.SendingDate.ToString("dd MMM HH:mm"))
+                            </p>
+                        </div>
+                    </div>
+                </a>
+                                }
+            </div>
+        </div>
+    </div>
+    <!--start email overlay-->
+    <div class="overlay email-toggle-btn-mobile"></div>
+    <!--end email overlay-->
+</div>

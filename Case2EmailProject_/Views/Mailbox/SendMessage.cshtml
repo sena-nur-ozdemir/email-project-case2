@@ -1,0 +1,258 @@
+﻿@model Case2EmailProject_.Dtos.CreateMessageDto
+@{
+    ViewData["Title"] = "SendMessage";
+    Layout = "~/Views/Shared/_UILayout.cshtml";
+}
+
+<div class="email-wrapper">
+    @await Component.InvokeAsync("_MailboxSidebarComponentPartial")
+
+    <div class="email-header d-xl-flex align-items-center">
+        <div class="d-flex align-items-center">
+            <div class="email-toggle-btn me-3">
+                <i class='bx bx-menu'></i>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="header-icon-wrapper">
+                    <i class='bx bx-send'></i>
+                </div>
+                <h4 class="mb-0 ms-2 header-title">Yeni Mesaj Gönder</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="email-content">
+        <div class="card">
+            <div class="card-body">
+                <form method="post">
+                    <div class="row g-3">
+
+                        <!-- Alıcı -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Alıcı <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light">
+                                    <i class='bx bx-user'></i>
+                                </span>
+                                <input type="email"
+                                       class="form-control"
+                                       asp-for="ReceiverMail"
+                                       placeholder="Alıcı email adresi"
+                                       required />
+                            </div>
+                        </div>
+
+                        <!-- Kategori & Konu -->
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Kategori <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light">
+                                    <i class='bx bx-category'></i>
+                                </span>
+                                <select asp-for="CategoryId" asp-items="(List<SelectListItem>)ViewBag.categories" class="form-control">
+                                    <option value="">Kategori Seçiniz</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-bold">Konu <span class="text-danger">*</span></label>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light">
+                                    <i class='bx bx-edit'></i>
+                                </span>
+                                <input type="text"
+                                       class="form-control"
+                                       asp-for="Subject"
+                                       placeholder="Mesaj konusu"
+                                       required />
+                            </div>
+                        </div>
+
+                        <!-- İçerik (Text Editor) -->
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Mesaj İçeriği <span class="text-danger">*</span></label>
+                            <textarea id="messageContent"
+                                      asp-for="MessageDetail"
+                                      class="form-control"></textarea>
+                        </div>
+
+                        <!-- Butonlar -->
+                        <div class="col-12">
+                            <hr class="my-3" />
+                            <div class="d-flex gap-2 flex-wrap">
+                                <button type="submit" class="btn btn-primary btn-sm px-4">
+                                    <i class='bx bx-send me-1'></i>Gönder
+                                </button>
+                                <button type="submit" formaction="/Mailbox/SaveDraft/" class="btn btn-secondary btn-sm px-4">
+                                    <i class='bx bx-save me-1'></i>Taslağa Kaydet
+                                </button>
+                                <button type="reset" class="btn btn-outline-danger btn-sm px-4">
+                                    <i class='bx bx-reset me-1'></i>Temizle
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay email-toggle-btn-mobile"></div>
+</div>
+
+@section Scripts {
+    <!-- TinyMCE -->
+    <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js"></script>
+
+    <script>
+        // TinyMCE Initialization
+        tinymce.init({
+            selector: '#messageContent',
+            height: 200,
+            menubar: false,
+            plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'charmap',
+                'searchreplace', 'visualblocks', 'fullscreen',
+                'insertdatetime', 'table', 'help', 'wordcount'
+            ],
+            toolbar: 'undo redo | formatselect | bold italic underline | ' +
+                'alignleft aligncenter alignright | ' +
+                'bullist numlist | forecolor backcolor | removeformat',
+            content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; font-size: 14px; }',
+            branding: false,
+            promotion: false,
+            statusbar: true
+        });
+
+        // Taslak Kaydetme
+        function saveDraft() {
+            const content = tinymce.get('messageContent').getContent();
+
+            Swal.fire({
+                position: 'top-end',
+                icon: 'success',
+                title: 'Taslak kaydedildi',
+                showConfirmButton: false,
+                timer: 1500,
+                toast: true
+            });
+
+            console.log('Taslak içerik:', content);
+        }
+
+    </script>
+
+    <style>
+        /* Header Styling */
+        .email-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 1rem 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+            .header-icon-wrapper i {
+                font-size: 20px;
+                color: white;
+            }
+
+        .header-title {
+            color: white;
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        /* Content Area */
+        .email-content {
+            padding: 0.75rem 2rem 1.5rem;
+            min-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            border-radius: 10px;
+            margin: 0;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Form Elements */
+        .form-label {
+            color: #2c3e50;
+            font-size: 0.875rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .input-group-sm {
+            font-size: 0.9rem;
+        }
+
+        .input-group-text {
+            border-right: none;
+            background-color: #f8f9fa;
+        }
+
+        .input-group .form-control,
+        .input-group .form-select {
+            border-left: none;
+        }
+
+        .input-group:focus-within .input-group-text {
+            border-color: #86b7fe;
+            background-color: #e7f1ff;
+        }
+
+        /* Buttons */
+        .btn-sm {
+            padding: 0.5rem 1.25rem;
+            font-size: 0.875rem;
+        }
+
+        .btn {
+            font-weight: 500;
+            border-radius: 6px;
+        }
+
+        /* TinyMCE */
+        .tox-tinymce {
+            border-radius: 6px;
+            border-color: #dee2e6;
+        }
+
+        /* Responsive */
+        @@media (max-width: 768px) {
+            .email-content {
+                padding: 1rem;
+            }
+
+            .card-body {
+                padding: 1rem;
+            }
+
+            .header-title {
+                font-size: 1rem;
+            }
+
+            .header-icon-wrapper {
+                width: 35px;
+                height: 35px;
+            }
+        }
+    </style>
+}

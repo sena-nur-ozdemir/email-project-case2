@@ -1,0 +1,27 @@
+﻿@model Case2EmailProject_.Entities.AppUser
+
+<li class="nav-item dropdown dropdown-user-profile">
+    <a class="nav-link dropdown-toggle dropdown-toggle-nocaret user-profile-link" href="javascript:;" data-bs-toggle="dropdown">
+        <div class="d-flex user-box align-items-center">
+            <div class="user-info">
+                <p class="user-name mb-0">@Model.Name @Model.Surname</p>
+                <p class="designattion mb-0">Çevrimiçi</p>
+            </div>
+            <img src="~/images/@(string.IsNullOrEmpty(Model.ImageUrl) ? "user-avatar.png" : Model.ImageUrl)" class="user-img" alt="user avatar">
+        </div>
+    </a>
+    <div class="dropdown-menu dropdown-menu-end">
+        <a class="dropdown-item" href="/Profile/Index/">
+            <i class="bx bx-user"></i><span>Profil</span>
+        </a>
+        <a class="dropdown-item" href="/Dashboard/Index/">
+            <i class="bx bx-tachometer"></i><span>Dashboard</span>
+        </a>
+        <form asp-controller="Login" asp-action="Logout" method="post">
+            <button type="submit" class="dropdown-item">
+                <i class="bx bx-power-off"></i>
+                <span>Çıkış Yap</span>
+            </button>
+        </form>
+    </div>
+</li>
