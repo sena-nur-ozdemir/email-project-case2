@@ -86,6 +86,27 @@ Bu proje ile aşağıdaki konularda pratik yapılmıştır:
 
 ---
 
+# 📸 Proje Görselleri
+
+### 🔐 Login Sayfası
+<img width="1900" height="857" alt="image" src="https://github.com/user-attachments/assets/25f9e2bc-3f00-4f82-a759-9b6bedbceb8a" />
+
+
+### 📝 Register Sayfası
+
+
+### 📥 Gelen Kutusu
+
+
+### ✉️ Mail Oluşturma (Compose)
+
+
+### 📊 Dashboard
+
+
+
+---
+
 # 🎓 Eğitim
 
 Bu proje **M&Y Yazılım Eğitim Akademi** tarafından verilen  
