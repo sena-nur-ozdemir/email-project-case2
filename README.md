@@ -99,6 +99,7 @@ Bu proje ile aşağıdaki konularda pratik yapılmıştır:
 <img width="1913" height="861" alt="image" src="https://github.com/user-attachments/assets/193d2811-0dfb-4586-9aab-42939319369f" />
 
 ### ✉️ Email Doğrulama
+<img width="1536" height="1024" alt="onaymailekranı" src="https://github.com/user-attachments/assets/235ee658-e054-4f27-a3f9-a14421a5686f" />
 
 ### 📥 Gelen Kutusu
 <img width="1918" height="867" alt="image" src="https://github.com/user-attachments/assets/adba0c71-463e-4741-9596-5e387201afc6" />
@@ -108,6 +109,9 @@ Bu proje ile aşağıdaki konularda pratik yapılmıştır:
 
 ### 📊 Dashboard
 <img width="1902" height="865" alt="image" src="https://github.com/user-attachments/assets/42ce4578-6fca-4261-a940-1235b312983f" />
+
+### 📥 Okunmayan Mailler Bildirim Paneli
+<img width="1918" height="870" alt="image" src="https://github.com/user-attachments/assets/3da75e30-1b7c-4623-9e9b-a5608edf3d4f" />
 
 ---
 
